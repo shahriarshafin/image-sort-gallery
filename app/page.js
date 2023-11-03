@@ -1,3 +1,9 @@
+import Gallery from '@/components/Gallery';
+
 export default function Home() {
-	return <div>Hacking Start</div>;
+	return (
+		<div>
+			<Gallery />
+		</div>
+	);
 }
