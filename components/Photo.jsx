@@ -2,13 +2,17 @@ import Image from 'next/image';
 import React, { forwardRef, useState } from 'react';
 
 export const Photo = forwardRef(function Photo(
-	{ url, index, faded, style, ...props },
+	{ url, index, faded, style, onSelectionChange, ...props },
 	ref
 ) {
 	const [checked, setChecked] = useState(false);
 
 	const handleCheckboxChange = () => {
-		setChecked(!checked);
+		const newChecked = !checked;
+		setChecked(newChecked);
+		if (onSelectionChange) {
+			onSelectionChange(newChecked);
+		}
 	};
 
 	const inlineStyles = {
@@ -34,7 +38,7 @@ export const Photo = forwardRef(function Photo(
 				priority
 				fill
 				className={`rounded-md transition ease-in group-hover:brightness-50 w-full h-full ${
-					checked && 'opacity-50 group-hover:brightness-100'
+					checked && 'opacity-50 group-hover:!brightness-100'
 				}`}
 			/>
 			<div
