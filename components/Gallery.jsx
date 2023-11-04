@@ -25,6 +25,7 @@ const UploadGallery = () => {
 	const [items, setItems] = useState(photos);
 	const [activeId, setActiveId] = useState(null);
 	const [selectedCount, setSelectedCount] = useState(0);
+	const [selectedIndexes, setSelectedIndexes] = useState([]);
 
 	const sensors = useSensors(
 		useSensor(MouseSensor),
@@ -48,7 +49,20 @@ const UploadGallery = () => {
 				const oldIndex = items.indexOf(active.id);
 				const newIndex = items.indexOf(over.id);
 
-				return arrayMove(items, oldIndex, newIndex);
+				const updatedItems = arrayMove(items, oldIndex, newIndex);
+
+				const updatedSelectedIndexes = selectedIndexes.map((index) => {
+					if (index === oldIndex) {
+						return newIndex;
+					} else if (index === newIndex && newIndex > oldIndex) {
+						return index - 1;
+					}
+					return index;
+				});
+
+				setSelectedIndexes(updatedSelectedIndexes);
+
+				return updatedItems;
 			});
 		}
 
@@ -60,14 +74,31 @@ const UploadGallery = () => {
 	}
 
 	// Function to handle checkbox change in Photo component
-	function handlePhotoSelection(isSelected) {
+	function handlePhotoSelection(index, isSelected) {
 		setSelectedCount((prevCount) =>
 			isSelected ? prevCount + 1 : prevCount - 1
 		);
+		setSelectedIndexes((prevSelectedIndexes) => {
+			if (isSelected) {
+				return [...prevSelectedIndexes, index];
+			} else {
+				return prevSelectedIndexes.filter((i) => i !== index);
+			}
+		});
+	}
+	function deleteSelectedItems() {
+		if (selectedIndexes.length > 0) {
+			const newItems = items.filter(
+				(item, index) => !selectedIndexes.includes(index)
+			);
+			setItems(newItems);
+			setSelectedIndexes([]);
+			setSelectedCount(0);
+		}
 	}
 
 	return (
-		<div>
+		<div className='shadow rounded-md'>
 			<div className='px-7 py-3 bg-white border-b rounded-t-md flex justify-between items-center'>
 				<p className='text-lg font-semibold'>
 					{selectedCount === 0 ? (
@@ -88,7 +119,14 @@ const UploadGallery = () => {
 						</div>
 					)}
 				</p>
-				<button className='text-[#ea3f34] hover:underline'>Delete files</button>
+				{selectedCount > 0 && (
+					<button
+						onClick={deleteSelectedItems}
+						className='text-[#ea3f34] hover:underline'
+					>
+						Delete {selectedCount === 1 ? 'file' : 'files'}
+					</button>
+				)}
 			</div>
 			<div className='p-8 rounded-b-md bg-white'>
 				<DndContext
@@ -107,7 +145,9 @@ const UploadGallery = () => {
 									key={item}
 									url={item}
 									index={index}
-									onSelectionChange={handlePhotoSelection}
+									onSelectionChange={(isSelected) =>
+										handlePhotoSelection(index, isSelected)
+									}
 								/>
 							))}
 							<UploadZone />
