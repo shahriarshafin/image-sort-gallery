@@ -33,8 +33,8 @@ export const Photo = forwardRef(function Photo(
 			{...props}
 		>
 			<Image
-				src={`/${url}`}
-				alt={`/${url}`}
+				src={url}
+				alt={url}
 				priority
 				fill
 				className={`rounded-md transition ease-in group-hover:brightness-50 w-full h-full ${
