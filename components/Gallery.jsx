@@ -3,6 +3,7 @@ import {
 	DndContext,
 	DragOverlay,
 	MouseSensor,
+	PointerSensor,
 	TouchSensor,
 	closestCenter,
 	useSensor,
@@ -23,7 +24,15 @@ import { photos } from './photos';
 const UploadGallery = () => {
 	const [items, setItems] = useState(photos);
 	const [activeId, setActiveId] = useState(null);
-	const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
+	const sensors = useSensors(
+		useSensor(MouseSensor),
+		useSensor(TouchSensor),
+		useSensor(PointerSensor, {
+			activationConstraint: {
+				distance: 8,
+			},
+		})
+	);
 
 	return (
 		<div>
@@ -33,8 +42,8 @@ const UploadGallery = () => {
 			</div>
 			<div className='p-7 rounded-b-md bg-white'>
 				<DndContext
-					// sensors={sensors}
-					// collisionDetection={closestCenter}
+					sensors={sensors}
+					collisionDetection={closestCenter}
 					onDragStart={handleDragStart}
 					onDragEnd={handleDragEnd}
 					onDragCancel={handleDragCancel}
