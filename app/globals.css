@@ -1,9 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-body {
-	@apply bg-[#edf1f7];
-}
-* {
-	/* outline: 1px solid rgba(50, 205, 50, 0.342) !important; */
+
+@layer base {
+	body {
+		@apply bg-[#edf1f7];
+	}
 }

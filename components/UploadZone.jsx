@@ -1,6 +1,6 @@
 const UploadZone = () => {
 	return (
-		<div className='flex flex-col justify-center items-center bg-[#fafbfb] border border-[#dcdfe2] border-dashed rounded-md h-[150px] w-[150px] cursor-pointer'>
+		<div className='flex flex-col justify-center items-center bg-[#fafbfb] border border-[#dcdfe2] border-dashed rounded-md cursor-pointer p-4'>
 			<svg
 				xmlns='http://www.w3.org/2000/svg'
 				viewBox='0 0 24 24'

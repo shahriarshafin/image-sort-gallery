@@ -15,42 +15,42 @@ import {
 	rectSortingStrategy,
 } from '@dnd-kit/sortable';
 import React, { useState } from 'react';
-
-import { Photo } from './Photo';
+import toast, { Toaster } from 'react-hot-toast';
+import { photos } from '../data/photos';
+import Header from './Header';
+import { PhotoCard } from './PhotoCard';
 import { SortablePhoto } from './SortablePhoto';
 import UploadZone from './UploadZone';
-import { photos } from './photos';
 
-const UploadGallery = () => {
-	const [items, setItems] = useState(photos);
+const Gallery = () => {
+	const [photoData, setPhotoData] = useState(photos);
 	const [activeId, setActiveId] = useState(null);
 	const [selectedCount, setSelectedCount] = useState(0);
 	const [selectedIndexes, setSelectedIndexes] = useState([]);
 
+	// Initializing sensors for detect input methods to manage drag operations
 	const sensors = useSensors(
 		useSensor(MouseSensor),
 		useSensor(TouchSensor),
-		useSensor(PointerSensor, {
-			activationConstraint: {
-				distance: 8,
-			},
-		})
+		useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
 	);
 
-	function handleDragStart(event) {
-		setActiveId(event.active.id);
-	}
+	const handleDragStart = (event) => setActiveId(event.active.id);
 
-	function handleDragEnd(event) {
+	const handleDragCancel = () => setActiveId(null);
+
+	const handleDragEnd = (event) => {
 		const { active, over } = event;
 
 		if (active.id !== over.id) {
-			setItems((items) => {
+			// Reorders the images after drag
+			setPhotoData((items) => {
 				const oldIndex = items.indexOf(active.id);
 				const newIndex = items.indexOf(over.id);
 
 				const updatedItems = arrayMove(items, oldIndex, newIndex);
 
+				// Adjusts selected indexes when images are rearranged
 				const updatedSelectedIndexes = selectedIndexes.map((index) => {
 					if (index === oldIndex) {
 						return newIndex;
@@ -67,67 +67,39 @@ const UploadGallery = () => {
 		}
 
 		setActiveId(null);
-	}
+	};
 
-	function handleDragCancel() {
-		setActiveId(null);
-	}
-
-	// Function to handle checkbox change in Photo component
-	function handlePhotoSelection(index, isSelected) {
+	const handlePhotoSelection = (index, isSelected) => {
 		setSelectedCount((prevCount) =>
 			isSelected ? prevCount + 1 : prevCount - 1
 		);
-		setSelectedIndexes((prevSelectedIndexes) => {
-			if (isSelected) {
-				return [...prevSelectedIndexes, index];
-			} else {
-				return prevSelectedIndexes.filter((i) => i !== index);
-			}
-		});
-	}
-	function deleteSelectedItems() {
+		setSelectedIndexes((prevSelectedIndexes) =>
+			isSelected
+				? [...prevSelectedIndexes, index]
+				: prevSelectedIndexes.filter((i) => i !== index)
+		);
+	};
+
+	const deleteSelectedItems = () => {
+		toast.success('Deleted Successfully!');
+
 		if (selectedIndexes.length > 0) {
-			const newItems = items.filter(
-				(item, index) => !selectedIndexes.includes(index)
+			// Filter out selected images
+			const newItems = photoData.filter(
+				(_, index) => !selectedIndexes.includes(index)
 			);
-			setItems(newItems);
+			setPhotoData(newItems);
 			setSelectedIndexes([]);
 			setSelectedCount(0);
 		}
-	}
+	};
 
 	return (
 		<div className='shadow rounded-md'>
-			<div className='px-7 py-3 bg-white border-b rounded-t-md flex justify-between items-center'>
-				<p className='text-lg font-semibold'>
-					{selectedCount === 0 ? (
-						'Gallery'
-					) : (
-						<div className='flex items-center gap-3'>
-							<svg
-								className='h-5 w-5'
-								xmlns='http://www.w3.org/2000/svg'
-								viewBox='0 0 448 512'
-							>
-								<path
-									d='M64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64zM337 209L209 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L303 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z'
-									fill='#0175ff'
-								/>
-							</svg>
-							{selectedCount} {selectedCount === 1 ? 'File' : 'Files'} Selected
-						</div>
-					)}
-				</p>
-				{selectedCount > 0 && (
-					<button
-						onClick={deleteSelectedItems}
-						className='text-[#ea3f34] hover:underline'
-					>
-						Delete {selectedCount === 1 ? 'file' : 'files'}
-					</button>
-				)}
-			</div>
+			<Header
+				selectedCount={selectedCount}
+				deleteSelectedItems={deleteSelectedItems}
+			/>
 			<div className='p-8 rounded-b-md bg-white'>
 				<DndContext
 					sensors={sensors}
@@ -136,11 +108,11 @@ const UploadGallery = () => {
 					onDragEnd={handleDragEnd}
 					onDragCancel={handleDragCancel}
 				>
-					<SortableContext items={items} strategy={rectSortingStrategy}>
+					<SortableContext items={photoData} strategy={rectSortingStrategy}>
 						<div
-							className={`grid lg:grid-cols-5 grid-cols-2 md:grid-cols-3 gap-5`}
+							className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5 auto-rows-fr`}
 						>
-							{items.map((item, index) => (
+							{photoData.map((item, index) => (
 								<SortablePhoto
 									key={item}
 									url={item}
@@ -155,14 +127,15 @@ const UploadGallery = () => {
 					</SortableContext>
 
 					<DragOverlay adjustScale={true}>
-						{activeId ? (
-							<Photo url={activeId} index={items.indexOf(activeId)} />
-						) : null}
+						{activeId && (
+							<PhotoCard url={activeId} index={photoData.indexOf(activeId)} />
+						)}
 					</DragOverlay>
 				</DndContext>
 			</div>
+			<Toaster position='top-right' />
 		</div>
 	);
 };
 
-export default UploadGallery;
+export default Gallery;
