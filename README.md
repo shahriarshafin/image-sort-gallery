@@ -1,26 +1,30 @@
 # Image Sort Gallery
+
 <p align="center">
-    <img src='https://github.com/shahriarshafin/image-sort-gallery/assets/32214710/2908b3ed-e1bf-45ba-8956-d0277dac7147' alt="Logo">
+    <img src='https://raw.githubusercontent.com/shahriarshafin/image-sort-gallery/main/public/images/screenshot.png' alt="project-screenshot">
 </p>
 <h1>
 <a href="https://sort-gallery.vercel.app/" target="_blank">sort-gallery.vercel.app</a>
 </h1>
 
 ## Description
+
 An image gallery built with Next.js that enables effortless sorting, rearranging, and showcasing of images.
 
 ## Features
+
 - **Responsive Grid Layout:** Ensures responsiveness for various screen sizes.
-  
+
 - **Drag-and-Drop Reordering:** Allows effortless image rearrangement.
-  
+
 - **Multi-Image Deletion:** Select and delete multiple images with visual cues.
-  
+
 - **Feature Image Selection:** Set a feature image through sorting, visually distinct.
-  
+
 - **Enhanced User Experience:** Smooth, responsive, with polished transitions.
 
 ## Set up and run
+
 1. Clone the repository
 
 ```bash
@@ -48,6 +52,7 @@ npm run dev # or, yarn dev
 That's All! Now open [localhost:3000](http://localhost:3000/) to see the app.
 
 ## Built with
+
 - **Framework**: [Next.js](https://nextjs.org/)
 - **Drag & Drop**: [dnd kit](https://dndkit.com/)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
@@ -55,4 +60,5 @@ That's All! Now open [localhost:3000](http://localhost:3000/) to see the app.
 - **Deployment**: [Vercel](https://vercel.com)
 
 ## License
+
 This project is licensed under the MIT License.
